@@ -9,8 +9,7 @@ To run the shell, make sure you have Rust installed on your system. You can inst
 Once Rust is installed, you can compile and run the shell using the following commands:
 
 ```bash
-$ rustc main.rs -o simple_shell
-$ ./simple_shell
+$ cargo run
 ```
 
 
