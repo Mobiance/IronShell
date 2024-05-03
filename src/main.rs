@@ -17,9 +17,9 @@ fn main() {
         let mut commands = input.trim().split(" | ").peekable();
         let mut previous_command = None;
 
-        while let Some(_command) = commands.next(){
+        while let Some(command) = commands.next(){
 
-            let mut parts = input.trim().split_whitespace();
+            let mut parts = command.trim().split_whitespace();
             let command = parts.next().unwrap();
             let args = parts;
 
