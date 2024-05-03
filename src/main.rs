@@ -24,11 +24,18 @@ fn main() {
                 if let Err(e) = std::env::set_current_dir(&root) {
                     eprintln!("{}", e);
                 }
-            }
+            },
+            "exit" => return,
             command => {
-                let mut child = Command::new(command).args(args).spawn().unwrap();
+                let child = Command::new(command)
+                    .args(args)
+                    .spawn();
 
-                child.wait().unwrap();
+                match child  {
+                    Ok(mut child) => { child.wait().unwrap(); },
+                    Err(e) => { eprintln!("{}", e);
+                }
+                }
             }
         }
     }
