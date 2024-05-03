@@ -1,3 +1,13 @@
+use std::process::Command;
+
 fn main() {
-    println!("Hello, world!");
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).unwrap();
+
+    let command = input.trim();
+
+    Command::new(command)
+        .spawn()
+        .unwrap();
 }
+
