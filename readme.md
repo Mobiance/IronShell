@@ -1,42 +1,60 @@
-# Simple Shell in Rust
+//format the readme in markdown
+# IronShell
 
-This is a simple shell implementation in Rust, allowing users to execute commands and pipe their output.
+IronShell is a customizable and interactive command-line interface (CLI) tool written in Rust. It provides a user-friendly environment for executing commands, navigating directories, and interacting with Git repositories.
+Features
 
-## Getting Started
+- Customizable Prompt: IronShell offers a customizable prompt that displays the current directory and Git branch (if available).
+- Built-in Commands: Includes built-in commands such as cd, exit, mkdir, del, ls, etc., for common file system operations.
+- Pipeline Support: Supports command chaining using the | operator for creating pipelines.
+- Git Integration: Displays the current Git branch in the prompt, allowing users to easily work with Git repositories.
 
-To run the shell, make sure you have Rust installed on your system. You can install Rust by following the instructions on the official Rust website: https://www.rust-lang.org/.
+## Installation
 
-Once Rust is installed, you can compile and run the shell using the following commands:
+To install IronShell, ensure you have Rust installed on your system. You can install Rust by following the instructions on rustup.rs.
+Once Rust is installed, you can install IronShell using Cargo, the Rust package manager:
 
 ```bash
-$ cargo run
+cargo install IronShell
 ```
-
-
-## Features
-
-    Command Execution: Users can type commands to run within the shell.
-    Piping: Commands can be piped together using the | operator.
-    Change Directory (cd): Users can change the current directory using the cd command.
 
 ## Usage
 
-    When prompted, type a command you want to execute.
-    Press Enter to run the command.
-    To pipe commands, separate them with |. For example: ls -l | grep .rs.
-    Use cd <directory> to change the current directory.
-
-## Example
+After installing IronShell, you can start the shell by running:
 
 ```bash
-Type a command to run:
-$ ls -l | grep .rs
--rwxr-xr-x 1 user user 12345 May 1 12:34 main.rs
+IronShell
 ```
 
+Once the shell is launched, you can type commands directly into the prompt. Here are some examples of common commands:
 
-## Notes
+- Navigate to a directory:
 
-    This shell is a basic implementation and may not support all features of a standard shell.
-    Error handling is minimal and may need improvement for robustness.
-    Use caution when executing commands, especially those involving system operations.
+```bash
+cd path/to/directory
+```
+ - List files in the current directory:
+
+```bash
+ls
+```
+
+- Create a new directory:
+
+```bash
+mkdir new_directory
+```
+
+- Run a custom command:
+
+```bash
+custom_command arg1 arg2
+```
+
+## Contributing
+
+Contributions to IronShell are welcome! If you encounter any issues, have feature requests, or would like to contribute code, please feel free to open an issue or submit a pull request on GitHub.
+
+## License
+
+IronShell is licensed under the MIT License. See the LICENSE file for details.
