@@ -37,6 +37,14 @@ fn main() {
                     let root = Path::new(new_dir);
                     if let Err(e) = std::env::set_current_dir(&root) {
                         eprintln!("{}", e);
+                    } else {
+                        let output = Command::new("eza")
+                            .stdout(Stdio::piped())
+                            .output()
+                            .expect("Failed to execute `eza` command");
+
+                        let stdout = String::from_utf8(output.stdout).expect("Not UTF8");
+                        println!("files in {}:\n{}", root.display(), stdout);
                     }
 
                     previous_command = None;
