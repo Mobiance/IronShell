@@ -1,14 +1,21 @@
 use std::{
-    io::{stdout, Write},
+    io::Write,
     path::Path,
     process::{Command, Stdio},
 };
 
+use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+
 fn main() {
+    let mut stdout = StandardStream::stdout(ColorChoice::Always);
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
+
     println!("Type a command to run:");
+
     loop {
+        stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
         print!("$ ");
-        stdout().flush().unwrap();
+        stdout.flush().unwrap();
 
 
         let mut input = String::new();
