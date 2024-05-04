@@ -1,10 +1,29 @@
 use std::{
-    io::Write,
-    path::Path,
-    process::{Command, Stdio},
+    env, io:: Write, path::Path, process::{Command, Stdio}
 };
 
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
+
+fn custom_prompt(stdout: &mut StandardStream) -> String {
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
+
+    // Get the current directory
+    let current_dir = match env::current_dir() {
+        Ok(dir) => dir.display().to_string(),
+        Err(e) => {
+            eprintln!("Error getting current directory: {}", e);
+            String::from("?")
+        }
+    };
+
+    // Display the prompt with the current directory
+    print!("{} $ ", current_dir);
+    stdout.flush().unwrap();
+
+    let mut input = String::new();
+    std::io::stdin().read_line(&mut input).unwrap();
+    input.trim().to_string() 
+}
 
 fn main() {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
@@ -14,12 +33,10 @@ fn main() {
 
     loop {
         stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
-        print!("$ ");
         stdout.flush().unwrap();
 
 
-        let mut input = String::new();
-        std::io::stdin().read_line(&mut input).unwrap();
+        let input = custom_prompt(&mut stdout);
 
         let mut commands = input.trim().split(" | ").peekable();
         let mut previous_command = None;
