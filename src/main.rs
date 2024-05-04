@@ -4,6 +4,27 @@ use std::{
 
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
+use git2::Repository;
+
+fn get_current_git_branch() -> Option<String> {
+    let repo = match Repository::discover(".") {
+        Ok(repo) => repo,
+        Err(_) => return None,
+    };
+
+    let head = match repo.head() {
+        Ok(head) => head,
+        Err(_) => return None,
+    };
+
+    let branch = match head.shorthand() {
+        Some(branch) => branch,
+        None => return None,
+    };
+
+    Some(branch.to_string())
+}
+
 fn custom_prompt(stdout: &mut StandardStream) -> String {
 
     let current_dir = match env::current_dir() {
@@ -18,6 +39,12 @@ fn custom_prompt(stdout: &mut StandardStream) -> String {
     print!("$");
     stdout.set_color(ColorSpec::new().set_fg(Some(Color::Cyan))).unwrap();
     print!(" {}", current_dir);
+
+    if let Some(branch) = get_current_git_branch() {
+        stdout.set_color(ColorSpec::new().set_fg(Some(Color::Yellow))).unwrap();
+        print!(" on ({}) ", branch);
+        stdout.reset().unwrap();
+    }
 
     stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
     print!(" >> ");
