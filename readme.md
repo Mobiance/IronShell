@@ -1,4 +1,3 @@
-//format the readme in markdown
 # IronShell
 
 IronShell is a customizable and interactive command-line interface (CLI) tool written in Rust. It provides a user-friendly environment for executing commands, navigating directories, and interacting with Git repositories.
