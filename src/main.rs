@@ -1,5 +1,8 @@
 use std::{
-    env, io:: Write, path::Path, process::{Command, Stdio}
+    env,
+    io::Write,
+    path::Path,
+    process::{Command, Stdio},
 };
 
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
@@ -26,7 +29,6 @@ fn get_current_git_branch() -> Option<String> {
 }
 
 fn custom_prompt(stdout: &mut StandardStream) -> String {
-
     let current_dir = match env::current_dir() {
         Ok(dir) => dir.display().to_string(),
         Err(e) => {
@@ -35,50 +37,62 @@ fn custom_prompt(stdout: &mut StandardStream) -> String {
         }
     };
 
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Blue))).unwrap();
+    stdout
+        .set_color(ColorSpec::new().set_fg(Some(Color::Blue)))
+        .unwrap();
     print!("$");
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Cyan))).unwrap();
+    stdout
+        .set_color(ColorSpec::new().set_fg(Some(Color::Cyan)))
+        .unwrap();
     print!(" {}", current_dir);
 
     if let Some(branch) = get_current_git_branch() {
-        stdout.set_color(ColorSpec::new().set_fg(Some(Color::Yellow))).unwrap();
+        stdout
+            .set_color(ColorSpec::new().set_fg(Some(Color::Yellow)))
+            .unwrap();
         print!(" on ({}) ", branch);
         stdout.reset().unwrap();
     }
 
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
+    stdout
+        .set_color(ColorSpec::new().set_fg(Some(Color::Green)))
+        .unwrap();
     print!(" >> ");
 
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap();
+    stdout
+        .set_color(ColorSpec::new().set_fg(Some(Color::Red)))
+        .unwrap();
     stdout.flush().unwrap();
 
     let mut input = String::new();
     std::io::stdin().read_line(&mut input).unwrap();
-    input.trim().to_string() 
+    input.trim().to_string()
 }
 
 fn main() {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap();
+    stdout
+        .set_color(ColorSpec::new().set_fg(Some(Color::Red)))
+        .unwrap();
 
     println!("Type a command to run:");
 
     loop {
-        stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap();
+        stdout
+            .set_color(ColorSpec::new().set_fg(Some(Color::Red)))
+            .unwrap();
 
         let input = custom_prompt(&mut stdout);
 
         let mut commands = input.trim().split(" | ").peekable();
         let mut previous_command = None;
 
-        while let Some(command) = commands.next(){
-
+        while let Some(command) = commands.next() {
             let mut parts = command.trim().split_whitespace();
             let command = parts.next().unwrap();
             let args = parts;
 
             match command {
-
                 "cd" => {
                     let new_dir = args.peekable().peek().map_or("/", |x| *x);
                     let root = Path::new(new_dir);
@@ -95,7 +109,7 @@ fn main() {
                     }
 
                     previous_command = None;
-                },
+                }
                 "exit" => return,
                 "mkdir" => {
                     let dir_path = args.peekable().peek().map_or("/", |x| *x);
@@ -104,14 +118,27 @@ fn main() {
                         Err(e) => eprintln!("Error creating directory: {}", e),
                     }
                 },
+                "del" => {
+                    let target_path = args.peekable().peek().map_or("/", |x| *x);
+                    let path = Path::new(target_path);
+                    if path.is_dir() {
+                        match std::fs::remove_dir_all(path) {
+                            Ok(_) => println!("Directory deleted: {}", target_path),
+                            Err(e) => eprintln!("Error deleting directory: {}", e),
+                        }
+                    } else {
+                        match std::fs::remove_file(path) {
+                            Ok(_) => println!("File deleted: {}", target_path),
+                            Err(e) => eprintln!("Error deleting file: {}", e),
+                        }
+                    }
+                },
 
                 command => {
-
                     let stdin = previous_command
-                        .map_or(
-                            Stdio::inherit(),
-                            |output: std::process::Child| Stdio::from(output.stdout.unwrap()) 
-                        );
+                        .map_or(Stdio::inherit(), |output: std::process::Child| {
+                            Stdio::from(output.stdout.unwrap())
+                        });
 
                     let stdout = if commands.peek().is_some() {
                         Stdio::piped()
@@ -125,19 +152,20 @@ fn main() {
                         .stdout(stdout)
                         .spawn();
 
-                    match output  {
-                        Ok(output) => { previous_command = Some(output);},
+                    match output {
+                        Ok(output) => {
+                            previous_command = Some(output);
+                        }
                         Err(e) => {
                             previous_command = None;
                             eprintln!("{}", e);
                         }
                     }
-                    }
                 }
             }
+        }
         if let Some(mut final_command) = previous_command {
             final_command.wait().unwrap();
         }
     }
 }
-
