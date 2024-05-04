@@ -5,7 +5,6 @@ use std::{
 use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 
 fn custom_prompt(stdout: &mut StandardStream) -> String {
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
 
     let current_dir = match env::current_dir() {
         Ok(dir) => dir.display().to_string(),
@@ -15,7 +14,15 @@ fn custom_prompt(stdout: &mut StandardStream) -> String {
         }
     };
 
-    print!("{} $ ", current_dir);
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Blue))).unwrap();
+    print!("$");
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Cyan))).unwrap();
+    print!(" {}", current_dir);
+
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
+    print!(" >> ");
+
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap();
     stdout.flush().unwrap();
 
     let mut input = String::new();
@@ -25,14 +32,12 @@ fn custom_prompt(stdout: &mut StandardStream) -> String {
 
 fn main() {
     let mut stdout = StandardStream::stdout(ColorChoice::Always);
-    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
+    stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap();
 
     println!("Type a command to run:");
 
     loop {
-        stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
-        stdout.flush().unwrap();
-
+        stdout.set_color(ColorSpec::new().set_fg(Some(Color::Red))).unwrap();
 
         let input = custom_prompt(&mut stdout);
 
