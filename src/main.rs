@@ -117,7 +117,7 @@ fn main() {
                         Ok(_) => println!("Directory created: {}", dir_path),
                         Err(e) => eprintln!("Error creating directory: {}", e),
                     }
-                },
+                }
                 "del" => {
                     let target_path = args.peekable().peek().map_or("/", |x| *x);
                     let path = Path::new(target_path);
@@ -132,8 +132,20 @@ fn main() {
                             Err(e) => eprintln!("Error deleting file: {}", e),
                         }
                     }
+                }
+                "ls" => {
+                    let dir_path = args.peekable().peek().map_or(".", |x| *x);
+                    match std::fs::read_dir(dir_path) {
+                        Ok(entries) => {
+                            for entry in entries {
+                                if let Ok(entry) = entry {
+                                    println!("{}", entry.file_name().to_string_lossy());
+                                }
+                            }
+                        }
+                        Err(e) => eprintln!("Error listing directory: {}", e),
+                    }
                 },
-
                 command => {
                     let stdin = previous_command
                         .map_or(Stdio::inherit(), |output: std::process::Child| {
