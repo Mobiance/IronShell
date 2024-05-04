@@ -7,7 +7,6 @@ use termcolor::{Color, ColorChoice, ColorSpec, StandardStream, WriteColor};
 fn custom_prompt(stdout: &mut StandardStream) -> String {
     stdout.set_color(ColorSpec::new().set_fg(Some(Color::Green))).unwrap();
 
-    // Get the current directory
     let current_dir = match env::current_dir() {
         Ok(dir) => dir.display().to_string(),
         Err(e) => {
@@ -16,7 +15,6 @@ fn custom_prompt(stdout: &mut StandardStream) -> String {
         }
     };
 
-    // Display the prompt with the current directory
     print!("{} $ ", current_dir);
     stdout.flush().unwrap();
 
