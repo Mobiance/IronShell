@@ -97,6 +97,13 @@ fn main() {
                     previous_command = None;
                 },
                 "exit" => return,
+                "mkdir" => {
+                    let dir_path = args.peekable().peek().map_or("/", |x| *x);
+                    match std::fs::create_dir_all(dir_path) {
+                        Ok(_) => println!("Directory created: {}", dir_path),
+                        Err(e) => eprintln!("Error creating directory: {}", e),
+                    }
+                },
 
                 command => {
 
