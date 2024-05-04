@@ -5,8 +5,8 @@ use std::{
 };
 
 fn main() {
+    println!("Type a command to run:");
     loop {
-        println!("Type a command to run:");
         print!("$ ");
         stdout().flush().unwrap();
 
