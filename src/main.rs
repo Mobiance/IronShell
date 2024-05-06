@@ -50,7 +50,7 @@ fn custom_prompt(stdout: &mut StandardStream) -> String {
         stdout
             .set_color(ColorSpec::new().set_fg(Some(Color::Yellow)))
             .unwrap();
-        print!(" on ({}) ", branch);
+        print!(" on  ({}) ", branch);
         stdout.reset().unwrap();
     }
 
