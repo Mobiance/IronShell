@@ -99,13 +99,28 @@ fn main() {
                     if let Err(e) = std::env::set_current_dir(&root) {
                         eprintln!("{}", e);
                     } else {
-                        let output = Command::new("eza")
-                            .stdout(Stdio::piped())
-                            .output()
-                            .expect("Failed to execute `eza` command");
+                        // Determine the operating system
+                        if cfg!(target_os = "windows") {
+                            // On Windows, use `dir`
+                            let output = Command::new("cmd")
+                                .arg("/C")
+                                .arg("dir")
+                                .stdout(Stdio::piped())
+                                .output()
+                                .expect("Failed to execute `dir` command");
 
-                        let stdout = String::from_utf8(output.stdout).expect("Not UTF8");
-                        println!("files in {}:\n{}", root.display(), stdout);
+                            let stdout = String::from_utf8(output.stdout).expect("Not UTF8");
+                            println!("files in {}:\n{}", root.display(), stdout);
+                        } else {
+                            // On Unix-like systems, use `ls`
+                            let output = Command::new("ls")
+                                .stdout(Stdio::piped())
+                                .output()
+                                .expect("Failed to execute `ls` command");
+
+                            let stdout = String::from_utf8(output.stdout).expect("Not UTF8");
+                            println!("files in {}:\n{}", root.display(), stdout);
+                        }
                     }
 
                     previous_command = None;
