@@ -176,8 +176,25 @@ fn main() {
                                 eprintln!("{}", e);
                             }
                         }
-                    } else {
+                    } else if command.starts_with("bash") {
+                        let script_path = args.peekable().peek().map_or("", |x| x);
+                        let output = Command::new("bash")
+                            .arg("-f")
+                            .arg(script_path)
+                            .stdin(stdin)
+                            .stdout(stdout)
+                            .spawn();
 
+                        match output {
+                            Ok(output) => {
+                                previous_command = Some(output);
+                            }
+                            Err(e) => {
+                                previous_command = None;
+                                eprintln!("{}", e);
+                            }
+                        }
+                    } else {
                         let output = Command::new(command)
                             .args(args)
                             .stdin(stdin)
