@@ -145,7 +145,7 @@ fn main() {
                         }
                         Err(e) => eprintln!("Error listing directory: {}", e),
                     }
-                },
+                }
                 command => {
                     let stdin = previous_command
                         .map_or(Stdio::inherit(), |output: std::process::Child| {
@@ -158,19 +158,40 @@ fn main() {
                         Stdio::inherit()
                     };
 
-                    let output = Command::new(command)
-                        .args(args)
-                        .stdin(stdin)
-                        .stdout(stdout)
-                        .spawn();
+                    if command.starts_with("powershell") {
+                        let script_path = args.peekable().peek().map_or("", |x| x);
+                        let output = Command::new("powershell")
+                            .arg("-File")
+                            .arg(script_path)
+                            .stdin(stdin)
+                            .stdout(stdout)
+                            .spawn();
 
-                    match output {
-                        Ok(output) => {
-                            previous_command = Some(output);
+                        match output {
+                            Ok(output) => {
+                                previous_command = Some(output);
+                            }
+                            Err(e) => {
+                                previous_command = None;
+                                eprintln!("{}", e);
+                            }
                         }
-                        Err(e) => {
-                            previous_command = None;
-                            eprintln!("{}", e);
+                    } else {
+
+                        let output = Command::new(command)
+                            .args(args)
+                            .stdin(stdin)
+                            .stdout(stdout)
+                            .spawn();
+
+                        match output {
+                            Ok(output) => {
+                                previous_command = Some(output);
+                            }
+                            Err(e) => {
+                                previous_command = None;
+                                eprintln!("{}", e);
+                            }
                         }
                     }
                 }
